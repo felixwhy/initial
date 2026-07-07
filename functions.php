@@ -77,7 +77,6 @@ function themeConfig($form) {
 
 	$cjCDN = new Typecho_Widget_Helper_Form_Element_Radio('cjCDN', 
 	array('jd' => _t('jsDelivr'),
-	'sc' => _t('Staticfile'),
 	'cf' => _t('CDNJS')),
 	'jd', _t('公共静态资源来源'), _t('默认jsDelivr，若JS文件异常，可尝试切换来源'));
 	$form->addInput($cjCDN);
@@ -115,6 +114,34 @@ function themeConfig($form) {
 	0 => _t('关闭')),
 	0, _t('代码高亮'), _t('默认关闭，启用则会渲染页面内代码块”'));
 	$form->addInput($Highlight);
+
+	$HighlightTheme = new Typecho_Widget_Helper_Form_Element_Select('HighlightTheme',
+	array(
+		'default' => _t('Default'),
+		'github' => _t('GitHub'),
+		'github-dark' => _t('GitHub Dark'),
+		'atom-one-dark' => _t('Atom One Dark'),
+		'atom-one-light' => _t('Atom One Light'),
+		'monokai' => _t('Monokai'),
+		'monokai-sublime' => _t('Monokai Sublime'),
+		'dracula' => _t('Dracula'),
+		'vs2015' => _t('VS2015'),
+		'nord' => _t('Nord'),
+		'solarized-light' => _t('Solarized Light'),
+		'solarized-dark' => _t('Solarized Dark'),
+		'tokyo-night-dark' => _t('Tokyo Night Dark'),
+		'tokyo-night-light' => _t('Tokyo Night Light'),
+		'night-owl' => _t('Night Owl'),
+		'xcode' => _t('Xcode'),
+		'idea' => _t('IDEA'),
+		'rainbow' => _t('Rainbow'),
+		'tomorrow' => _t('Tomorrow'),
+		'tomorrow-night' => _t('Tomorrow Night'),
+		'stackoverflow-dark' => _t('StackOverflow Dark'),
+		'stackoverflow-light' => _t('StackOverflow Light'),
+	),
+	'default', _t('代码高亮主题'), _t('选择代码高亮所用的主题样式，需先启用上方"代码高亮"开关'));
+	$form->addInput($HighlightTheme);
 
 	$catalog = new Typecho_Widget_Helper_Form_Element_Radio('catalog', 
 	array('post' => _t('使用文章内设定'),
@@ -177,6 +204,9 @@ function themeConfig($form) {
 	0 => _t('关闭')),
 	0, _t('单栏模式'), _t('关闭侧边栏，仅显示主栏内容。'));
 	$form->addInput($OneCOL);
+
+	$OneColWidth = new Typecho_Widget_Helper_Form_Element_Text('OneColWidth', NULL, NULL, _t('单栏模式-主栏宽度'), _t('仅在启用“单栏模式”时生效，留空则使用默认宽度（750px）。<br>输入大于 1 的数字，视为固定的像素宽度（例如 <b>800</b> 即 800px）；<br>输入 0~1 之间的小数，视为父容器宽度的百分比（例如 <b>0.8</b> 即 80%）；<br>输入带百分号的数字，同样视为百分比（例如 <b>80%</b> 即 80%）。'));
+	$form->addInput($OneColWidth);
 
 	$ICPbeian = new Typecho_Widget_Helper_Form_Element_Text('ICPbeian', NULL, NULL, _t('ICP备案号'), _t('在这里输入ICP备案号,留空则不显示'));
 	$form->addInput($ICPbeian);

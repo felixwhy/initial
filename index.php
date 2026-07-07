@@ -1,12 +1,12 @@
 <?php
 /**
- * Initial - 简约而不简单
+ * Initial - 简约而不简单 - 原作者: JIElive
  * 还原本质 勿忘初心
  * 
  * @package Initial
- * @author JIElive
- * @version 2.5.5
- * @link http://www.offodd.com/
+ * @author Felix
+ * @version 2.6.0
+ * @link https://github.com/felixwhy/initial
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
 $this->need('header.php');

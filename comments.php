@@ -62,7 +62,7 @@ echo $commentClass;
 <h3 id="response">添加新评论</h3>
 <form method="post" action="<?php $this->commentUrl() ?>" id="comment-form"<?php if(!$this->user->hasLogin()): ?> class="comment-form clearfix"<?php endif; ?>>
 <?php if($this->user->hasLogin()): ?>
-<p>登录身份: <a href="<?php $this->options->profileUrl(); ?>" target="_blank"><?php $this->user->screenName(); ?></a>. <a href="<?php $this->options->logoutUrl(); ?>" title="Logout"<?php if ($this->options->PjaxOption): ?> no-pjax<?php endif; ?>>退出 &raquo;</a></p>
+<p>登录身份: <a href="<?php $this->options->profileUrl(); ?>" target="_blank"><?php $this->user->screenName(); ?></a>. <a href="<?php $this->options->logoutUrl(); ?>" title="Logout"<?php if ($this->options->PjaxOption): ?> data-no-swup<?php endif; ?>>退出 &raquo;</a></p>
 <?php endif; ?>
 <p <?php if(!$this->user->hasLogin()): ?>class="textarea"<?php endif; ?>>
 <textarea name="text" id="textarea" placeholder="加入讨论..." required ><?php $this->remember('text'); ?></textarea>
@@ -73,6 +73,7 @@ echo $commentClass;
 <input type="email" name="mail" id="mail" class="text" placeholder="邮箱<?php if ($this->options->commentsRequireMail): ?> *<?php endif; ?>" value="<?php $this->remember('mail'); ?>"<?php if ($this->options->commentsRequireMail): ?> required<?php endif; ?> />
 <input type="url" name="url" id="url" class="text" placeholder="http://<?php if ($this->options->commentsRequireURL): ?> *<?php endif; ?>" value="<?php $this->remember('url'); ?>"<?php if ($this->options->commentsRequireURL): ?> required<?php endif; ?> />
 <?php endif; ?>
+<?php $comments->smilies(); ?>
 <button type="submit" class="submit">提交评论</button>
 </p>
 </form>

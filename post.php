@@ -8,8 +8,9 @@ if (!empty($this->options->Breadcrumbs) && in_array('Postshow', $this->options->
 <article class="post<?php if ($this->options->PjaxOption && $this->hidden): ?> protected<?php endif; ?>">
 <h1 class="post-title"><a href="<?php $this->permalink() ?>"><?php $this->title() ?></a></h1>
 <ul class="post-meta">
-<li><?php $this->date(); ?></li>
-<li><?php $this->category(','); ?></li>
+<li>发布：<?php $this->date(); ?></li>
+<li>更新：<?php echo date('Y-m-d' , $this->modified); ?></li>
+<li>分类：<?php $this->category(','); ?></li>
 <li><a href="<?php $this->permalink() ?>#comments"><?php $this->commentsNum('暂无评论', '%d 条评论'); ?></a></li>
 <li><?php Postviews($this); ?></li>
 </ul>

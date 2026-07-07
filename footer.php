@@ -11,7 +11,7 @@
 <?php endif; ?>
 </ul>
 <?php endif; ?>
-<p>&copy; <?php echo date('Y'); ?> <a href="<?php $this->options->siteUrl(); ?>"><?php $this->options->title(); ?></a>. Powered by <a href="http://www.typecho.org" target="_blank">Typecho</a> &amp; <a href="http://www.offodd.com/17.html" target="_blank">Initial</a>.</p>
+<p>&copy; <?php echo date('Y'); ?> <a href="<?php $this->options->siteUrl(); ?>"><?php $this->options->title(); ?></a>. Powered by <a href="http://www.typecho.org" target="_blank">Typecho</a> &amp; Initial.</p>
 <?php if ($this->options->ICPbeian): ?>
 <p><a href="http://beian.miit.gov.cn" class="icpnum" target="_blank" rel="noreferrer"><?php $this->options->ICPbeian(); ?></a></p>
 <?php endif; if ($this->options->AjaxLoad): ?>
@@ -33,14 +33,38 @@
 <?php endif; ?>
 </ul>
 </div>
-<?php endif; if ($this->options->PjaxOption || $this->options->AjaxLoad): ?>
-<script src="//<?php if ($this->options->cjCDN == 'cf'): ?>cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js<?php elseif ($this->options->cjCDN == 'sc'): ?>cdn.staticfile.org/jquery/2.1.4/jquery.min.js<?php else: ?>cdn.jsdelivr.net/npm/jquery@2.1.4/dist/jquery.min.js<?php endif; ?>"></script>
-<?php endif; if ($this->options->PjaxOption): ?>
-<script src="//<?php if ($this->options->cjCDN == 'cf'): ?>cdnjs.cloudflare.com/ajax/libs/jquery.pjax/2.0.1/jquery.pjax.min.js<?php elseif ($this->options->cjCDN == 'sc'): ?>cdn.staticfile.org/jquery.pjax/2.0.1/jquery.pjax.min.js<?php else: ?>cdn.jsdelivr.net/npm/jquery-pjax@2.0.1/jquery.pjax.min.js<?php endif; ?>"></script>
-<?php endif; if ($this->options->Highlight):?>
-<script src="//<?php if ($this->options->cjCDN == 'cf'): ?>cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js<?php elseif ($this->options->cjCDN == 'sc'): ?>cdn.staticfile.org/highlight.js/10.2.0/highlight.min.js<?php else: ?>cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.0/build/highlight.min.js<?php endif; ?>"></script>
 <?php endif; ?>
-<script src="<?php cjUrl('main.min.js') ?>"></script>
+<?php
+$libs=[
+        'cf'=>[
+            'jquery' => 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js',
+            'swup' => 'https://cdnjs.cloudflare.com/ajax/libs/swup/4.8.2/Swup.umd.js',
+            'highlightjs' => 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js',
+            'highlightjs-theme' => 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/default.min.css'
+        ],
+        'jd'=>[
+            'jquery' => 'https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js',
+            'swup' => 'https://cdn.jsdelivr.net/npm/swup@4.9.2/+esm',
+            'highlightjs' => 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
+            'highlightjs-theme' => 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/default.min.css'
+        ]
+    ];
+
+if ($this->options->PjaxOption || $this->options->AjaxLoad){
+    echo '<script src="'.$libs[$this->options->cjCDN]['jquery'].'"></script>';
+}
+if ($this->options->PjaxOption){
+    echo '<script type="module" src="'.$libs[$this->options->cjCDN]['swup'].'"></script>';
+}
+if ($this->options->Highlight){
+    $theme = $this->options->HighlightTheme ?: 'default';
+    echo '<script src="'.$libs[$this->options->cjCDN]['highlightjs'].'"></script>';
+    echo '<link rel="stylesheet" href="'.str_replace('/default.min.css', '/'.$theme.'.min.css', $libs[$this->options->cjCDN]['highlightjs-theme']).'">';
+}
+?>
+
+
+<script src="<?php cjUrl('main.js') ?>"></script>
 <?php $this->footer(); ?>
 <?php if ($this->options->CustomContent): $this->options->CustomContent(); ?>
 

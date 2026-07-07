@@ -16,9 +16,24 @@
 'author'    =>  _t('作者 %s 发布的文章')
 ), '', ' - '); ?><?php $this->options->title(); if ($this->is('index') && $this->options->subTitle): ?> - <?php $this->options->subTitle(); endif; ?></title>
 <?php $this->header('generator=&template=&pingback=&xmlrpc=&wlw=&commentReply=&rss1=&rss2=&antiSpam=&atom='); ?>
-<link rel="stylesheet" href="<?php cjUrl('style.min.css') ?>" />
+<link rel="stylesheet" href="<?php cjUrl('style.css') ?>" />
 <?php if ($this->options->CustomCSS): ?>
 <style type="text/css"><?php $this->options->CustomCSS(); ?></style>
+<?php endif; ?>
+<?php if ($this->options->OneCOL && $this->options->OneColWidth): ?>
+<?php
+$oneColWidth = trim($this->options->OneColWidth);
+if (substr($oneColWidth, -1) === '%') {
+	$oneColWidthCss = $oneColWidth;
+} elseif (is_numeric($oneColWidth)) {
+	$oneColWidthCss = $oneColWidth > 1 ? $oneColWidth.'px' : ($oneColWidth > 0 ? ($oneColWidth * 100).'%' : false);
+} else {
+	$oneColWidthCss = false;
+}
+?>
+<?php if ($oneColWidthCss): ?>
+<style type="text/css">@media(min-width:769px){.one-col #main{width:<?php echo $oneColWidthCss; ?>}}</style>
+<?php endif; ?>
 <?php endif; ?>
 </head>
 <body class="<?php if ($this->options->OneCOL): ?>one-col<?php else: ?>bd<?php endif; if ($this->options->HeadFixed): ?> head-fixed<?php endif; ?>">
@@ -98,6 +113,6 @@ endif; ?>
 </div>
 </div>
 </header>
-<div id="body"<?php if ($this->options->PjaxOption): ?> in-pjax<?php endif; ?>>
+<div id="body"<?php if ($this->options->PjaxOption): ?> data-swup<?php endif; ?>>
 <div class="container clearfix">
 <div id="main">
