@@ -44,7 +44,7 @@ $libs=[
         ],
         'jd'=>[
             'jquery' => 'https://cdn.jsdelivr.net/npm/jquery@4.0.0/dist/jquery.min.js',
-            'swup' => 'https://cdn.jsdelivr.net/npm/swup@4.9.2/+esm',
+            'swup' => 'https://cdn.jsdelivr.net/npm/swup@4.9.2/dist/Swup.umd.js',
             'highlightjs' => 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/highlight.min.js',
             'highlightjs-theme' => 'https://cdn.jsdelivr.net/npm/@highlightjs/cdn-assets@11.11.1/styles/default.min.css'
         ]
@@ -54,7 +54,7 @@ if ($this->options->PjaxOption || $this->options->AjaxLoad){
     echo '<script src="'.$libs[$this->options->cjCDN]['jquery'].'"></script>';
 }
 if ($this->options->PjaxOption){
-    echo '<script type="module" src="'.$libs[$this->options->cjCDN]['swup'].'"></script>';
+    echo '<script src="'.$libs[$this->options->cjCDN]['swup'].'"></script>';
 }
 if ($this->options->Highlight){
     $theme = $this->options->HighlightTheme ?: 'default';

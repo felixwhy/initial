@@ -5,7 +5,7 @@
 <meta charset="<?php $this->options->charset(); ?>" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<?php if (!empty($noindex) || $this->is('tag')): ?>
+<?php if (!empty($this->noindex) || $this->is('tag')): ?>
 <meta name="robots" content="noindex, follow">
 <?php endif; ?>
 <?php if ($this->options->favicon): ?>

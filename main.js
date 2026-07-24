@@ -1,9 +1,12 @@
 if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !== "undefined") {
+  let protoken = "";
+  let protectedForm, statusMsg;
+
   jQuery.fn.Shake = function (times, distance) {
     this.each(function () {
-      var element = $(this);
+      const element = $(this);
       element.css({ position: "relative" });
-      for (var x = 1; x <= times; x++) {
+      for (let x = 1; x <= times; x++) {
         element.animate({ left: -distance }, 50)
           .animate({ left: distance }, 50)
           .animate({ left: 0 }, 50);
@@ -13,45 +16,45 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
   };
 
   // Initialize Swup
-  var swup = new Swup({
+  const swup = new Swup({
     containers: ["#main"],
   });
 
   // Handle search form manually
-  var searchForm = document.getElementById("search");
+  const searchForm = document.getElementById("search");
   if (searchForm) {
-    searchForm.addEventListener("submit", function (event) {
+    searchForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      var query = document.getElementById("s").value;
+      const query = document.getElementById("s").value;
       if (query) {
-        var separator = window.location.search ? "&" : "?";
+        const separator = window.location.search ? "&" : "?";
         swup.loadPage({
-          url: window.location.pathname + separator + "s=" + encodeURIComponent(query),
+          url: `${window.location.pathname}${separator}s=${encodeURIComponent(query)}`,
         });
       }
     });
   }
 
   // Swup lifecycle hooks
-  swup.on("visit:start", function () {
+  swup.hooks.on("visit:start", () => {
     $("#header").prepend("<div id='bar'></div>");
   });
 
-  swup.on("content:replace", function () {
-    setTimeout(function () {
+  swup.hooks.on("content:replace", () => {
+    setTimeout(() => {
       $("#bar").remove();
     }, 300);
     $("#header").removeClass("on");
     $("#s").val("");
     $("#secondary").removeAttr("style");
     if (typeof hljs !== "undefined") {
-      document.querySelectorAll("pre code").forEach(function (block) {
+      document.querySelectorAll("pre code").forEach((block) => {
         hljs.highlightBlock(block);
       });
     }
   });
 
-  swup.on("page:view", function () {
+  swup.hooks.on("page:view", () => {
     if ($(".ajaxload").length) {
       initLoadMore();
     }
@@ -67,25 +70,25 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
   });
 
   function setupCommentForm() {
-    $body = $("html,body");
-    var commentListSelector = ".comment-list",
+    const $body = $("html,body");
+    const commentListSelector = ".comment-list",
       commentNumSelector = ".comment-num",
       replyLinkSelector = ".comment-reply a",
       whisperReplySelector = ".whisper-reply",
-      textareaSelector = "#textarea",
-      newCommentId = "",
-      parentReplyId = "";
+      textareaSelector = "#textarea";
+    let newCommentId = "";
+    let parentReplyId = "";
     bindReplyClick();
     $("#comment-form").submit(function () {
       $.ajax({
         url: $(this).attr("action"),
         type: "post",
         data: $(this).serializeArray(),
-        error: function () {
+        error: () => {
           alert("提交失败，请检查网络并重试或者联系管理员。");
           return false;
         },
-        success: function (responseData) {
+        success: (responseData) => {
           if (!$(commentListSelector, responseData).length) {
             alert(
               "您输入的内容不符合规则或者回复太频繁，请修改内容或者稍等片刻。",
@@ -97,9 +100,8 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
               .match(/id=\"?comment-\d+/g)
               .join()
               .match(/\d+/g)
-              .sort(function (a, b) {
-                return a - b;
-              })
+              .map(Number)
+              .sort((a, b) => a - b)
               .pop();
             if ($(".page-navigator .prev").length && parentReplyId == "") {
               newCommentId = "";
@@ -122,18 +124,17 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
               $(commentListSelector).prepend(responseData);
             }
             $("#li-comment-" + newCommentId).fadeIn();
-            var currentCount;
-            $(commentNumSelector).length
-              ? ((currentCount = parseInt($(commentNumSelector).text().match(/\d+/))),
-                $(commentNumSelector).html(
-                  $(commentNumSelector)
-                    .html()
-                    .replace(currentCount, currentCount + 1),
-                ))
-              : 0;
+            if ($(commentNumSelector).length) {
+              const currentCount = parseInt($(commentNumSelector).text().match(/\d+/));
+              $(commentNumSelector).html(
+                $(commentNumSelector)
+                  .html()
+                  .replace(currentCount, currentCount + 1),
+              );
+            }
             TypechoComment.cancelReply();
             $(textareaSelector).val("");
-            $(replyLinkSelector + "," + whisperReplySelector + ", #cancel-comment-reply-link").off("click");
+            $(`${replyLinkSelector},${whisperReplySelector}, #cancel-comment-reply-link`).off("click");
             bindReplyClick();
             if (newCommentId) {
               $body.animate(
@@ -152,21 +153,21 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
       return false;
     });
     function bindReplyClick() {
-      $(replyLinkSelector + "," + whisperReplySelector).click(function () {
+      $(`${replyLinkSelector},${whisperReplySelector}`).click(function () {
         parentReplyId = $(this).parent().parent().parent().attr("id");
       });
-      $("#cancel-comment-reply-link").click(function () {
+      $("#cancel-comment-reply-link").click(() => {
         parentReplyId = "";
       });
     }
   }
   setupCommentForm();
   if (document.getElementById("token")) {
-    var protoken = document.getElementById("token").value.replace("Token", "");
+    protoken = document.getElementById("token").value.replace("Token", "");
   }
   function setupProtectedPost() {
     $(".protected .post-title a, .protected .more a").click(function () {
-      var postElement = $(this).parent().parent();
+      const postElement = $(this).parent().parent();
       postElement.find(".word").text("请输入密码访问").css("color", "red").Shake(2, 10);
       postElement.find(":password").focus();
       return false;
@@ -181,15 +182,15 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
   }
   setupProtectedPost();
   function fetchPasswordToken() {
-    var postUrl = $(".protected .post-title a").attr("href");
+    const postUrl = $(".protected .post-title a").attr("href");
     if ($("h1.post-title").length) {
       protoken = $(".protected form").attr("action").replace(postUrl, "");
       submitPassword();
     } else {
       $.ajax({
         url: window.location.href,
-        success: function (responseData) {
-          protoken = $('.protected form[action^="' + postUrl + '"]', responseData)
+        success: (responseData) => {
+          protoken = $(`.protected form[action^="${postUrl}"]`, responseData)
             .attr("action")
             .replace(postUrl, "");
           submitPassword();
@@ -198,12 +199,12 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
     }
   }
   function submitPassword() {
-    var postUrl = protectedForm.parent().parent().find(".post-title a").attr("href");
+    const postUrl = protectedForm.parent().parent().find(".post-title a").attr("href");
     $.ajax({
       url: postUrl + protoken,
       type: "post",
       data: protectedForm.serializeArray(),
-      error: function () {
+      error: () => {
         resetStatusText();
         statusMsg
           .text("提交失败，请检查网络并重试或者联系管理员。")
@@ -211,7 +212,7 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
           .Shake(2, 10);
         return false;
       },
-      success: function (responseData) {
+      success: (responseData) => {
         if (!$("h1.post-title", responseData).length) {
           resetStatusText();
           statusMsg
@@ -226,8 +227,8 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
             .text("密码正确，如果没有跳转新页面，请手动刷新本页。")
             .css("color", "blue");
           $("h1.post-title").length
-            ? swup.loadPage({url: window.location.href})
-            : swup.loadPage({url: postUrl});
+            ? swup.loadPage({ url: window.location.href })
+            : swup.loadPage({ url: postUrl });
         }
       },
     });
@@ -236,7 +237,8 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
     }
   }
 }
-var isLoading = true;
+
+let isLoading = true;
 function initLoadMore() {
   $('.ajaxload li[class!="next"]').remove();
   $(".ajaxload .next a").click(function () {
@@ -248,20 +250,20 @@ function initLoadMore() {
   });
 }
 function loadNextPage() {
-  var nextLinkSelector = ".ajaxload .next a",
+  const nextLinkSelector = ".ajaxload .next a",
     nextUrl = $(nextLinkSelector).attr("href");
   $(nextLinkSelector).addClass("loading").text("正在加载");
   if (nextUrl) {
     $.ajax({
       url: nextUrl,
-      error: function () {
+      error: () => {
         alert("请求失败，请检查网络并重试或者联系管理员");
         $(nextLinkSelector).removeAttr("class").text("查看更多");
         isLoading = true;
         return false;
       },
-      success: function (responseData) {
-        var newPosts = $(responseData).find("#main .post"),
+      success: (responseData) => {
+        const newPosts = $(responseData).find("#main .post"),
           newNextUrl = $(responseData).find(nextLinkSelector).attr("href");
         if (newPosts) {
           $(".ajaxload").before(newPosts);
@@ -298,22 +300,22 @@ if (document.getElementsByClassName("ajaxload").length) {
     });
   }
 }
-window.onscroll = function () {
-  var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-  var topBtn = document.getElementById("top");
-  var sidebar = document.getElementById("secondary");
-  var isHeadFixed = document
+window.onscroll = () => {
+  const scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+  const topBtn = document.getElementById("top");
+  const sidebar = document.getElementById("secondary");
+  const isHeadFixed = document
     .getElementsByTagName("body")[0]
     .classList.contains("head-fixed");
   if (topBtn) {
-    var topBtnElement = document.getElementById("top");
+    const topBtnElement = document.getElementById("top");
     if (scrollTop >= 200) {
       topBtnElement.removeAttribute("class");
     } else {
       topBtnElement.setAttribute("class", "hidden");
     }
     topBtnElement.onclick = function totop() {
-      var currentScrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+      const currentScrollTop = document.body.scrollTop || document.documentElement.scrollTop;
       if (currentScrollTop > 1) {
         requestAnimationFrame(totop);
         scrollTo(0, currentScrollTop - currentScrollTop / 5);
@@ -324,7 +326,7 @@ window.onscroll = function () {
     };
   }
   if (isHeadFixed) {
-    var headerElement = document.getElementById("header");
+    const headerElement = document.getElementById("header");
     if (scrollTop > 0 && scrollTop < 30) {
       headerElement.style.padding = 15 - scrollTop / 2 + "px 0";
     } else if (scrollTop >= 30) {
@@ -334,9 +336,9 @@ window.onscroll = function () {
     }
   }
   if (sidebar && sidebar.hasAttribute("sidebar-fixed")) {
-    var mainElement = document.getElementById("main");
-    var windowHeight = document.documentElement.clientHeight;
-    var headerOffset = isHeadFixed ? 0 : 41;
+    const mainElement = document.getElementById("main");
+    const windowHeight = document.documentElement.clientHeight;
+    const headerOffset = isHeadFixed ? 0 : 41;
     if (mainElement.offsetHeight > sidebar.offsetHeight) {
       if (sidebar.offsetHeight > windowHeight - 71 && scrollTop > sidebar.offsetHeight + 101 - windowHeight) {
         if (scrollTop < mainElement.offsetHeight + 101 - windowHeight) {
@@ -357,11 +359,11 @@ window.onscroll = function () {
   }
 };
 if (document.getElementById("music")) {
-  (function () {
-    var audioElement = document.getElementById("audio");
-    var musicButton = document.getElementById("music");
-    var playlist = audioElement.getAttribute("data-src").split(",");
-    var volume = audioElement.getAttribute("data-vol");
+  (() => {
+    const audioElement = document.getElementById("audio");
+    const musicButton = document.getElementById("music");
+    const playlist = audioElement.getAttribute("data-src").split(",");
+    const volume = audioElement.getAttribute("data-vol");
     if (volume && volume >= 0 && volume <= 1) {
       audioElement.volume = volume;
     }
@@ -402,7 +404,7 @@ if (document.getElementById("music")) {
       musicButton.getElementsByTagName("i")[0].style.width =
         ((audioElement.currentTime / audioElement.duration) * 100).toFixed(1) + "%";
     }
-    musicButton.onclick = function () {
+    musicButton.onclick = () => {
       if (
         audioElement.canPlayType("audio/mpeg") != "" ||
         audioElement.canPlayType('audio/ogg;codes="vorbis"') != "" ||
@@ -424,27 +426,27 @@ if (document.getElementById("music")) {
     musicButton.removeAttribute("class");
   })();
 }
-var hasCornerTool = true;
+let hasCornerTool = true;
 function syncCatalogButton() {
-  var catalogColumn = document.getElementById("catalog-col"),
+  const catalogColumn = document.getElementById("catalog-col"),
     catalogBtn = document.getElementById("catalog"),
-    cornerToolElement = document.getElementById("cornertool"),
-    newListItem;
+    cornerToolElement = document.getElementById("cornertool");
+  let newListItem;
   if (catalogColumn && !catalogBtn) {
     if (cornerToolElement) {
-      cornerToolElement = cornerToolElement.getElementsByTagName("ul")[0];
+      const ul = cornerToolElement.getElementsByTagName("ul")[0];
       newListItem = document.createElement("li");
       newListItem.setAttribute("id", "catalog");
       newListItem.setAttribute("onclick", "Catalogswith()");
       newListItem.appendChild(document.createElement("span"));
-      cornerToolElement.appendChild(newListItem);
+      ul.appendChild(newListItem);
     } else {
       hasCornerTool = false;
-      cornerToolElement = document.createElement("div");
-      cornerToolElement.setAttribute("id", "cornertool");
-      cornerToolElement.innerHTML =
+      const tool = document.createElement("div");
+      tool.setAttribute("id", "cornertool");
+      tool.innerHTML =
         '<ul><li id="catalog" onclick="Catalogswith()"><span></span></li></ul>';
-      document.body.appendChild(cornerToolElement);
+      document.body.appendChild(tool);
     }
     document.getElementById("catalog").className = catalogColumn.className;
   }
@@ -459,7 +461,7 @@ function syncCatalogButton() {
 }
 syncCatalogButton();
 if (typeof hljs !== "undefined") {
-  hljs.initHighlightingOnLoad();
+  hljs.highlightAll();
 }
 
 console.log(

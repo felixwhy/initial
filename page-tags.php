@@ -5,7 +5,7 @@
  * @package custom
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
-$noindex = true;
+$this->noindex = true;
 $this->need('header.php');
 Breadcrumbs($this); ?>
 <article class="post">
