@@ -18,6 +18,7 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
   // Initialize Swup
   const swup = new Swup({
     containers: ["#main"],
+    animationSelector: false,
   });
 
   // Handle search form manually
@@ -28,9 +29,9 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
       const query = document.getElementById("s").value;
       if (query) {
         const separator = window.location.search ? "&" : "?";
-        swup.loadPage({
-          url: `${window.location.pathname}${separator}s=${encodeURIComponent(query)}`,
-        });
+        swup.navigate(
+          `${window.location.pathname}${separator}s=${encodeURIComponent(query)}`,
+        );
       }
     });
   }
@@ -49,7 +50,7 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
     $("#secondary").removeAttr("style");
     if (typeof hljs !== "undefined") {
       document.querySelectorAll("pre code").forEach((block) => {
-        hljs.highlightBlock(block);
+        hljs.highlightElement(block);
       });
     }
   });
@@ -227,8 +228,8 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
             .text("密码正确，如果没有跳转新页面，请手动刷新本页。")
             .css("color", "blue");
           $("h1.post-title").length
-            ? swup.loadPage({ url: window.location.href })
-            : swup.loadPage({ url: postUrl });
+            ? swup.navigate(window.location.href)
+            : swup.navigate(postUrl);
         }
       },
     });

@@ -5,7 +5,7 @@
  * 
  * @package Initial
  * @author Felix
- * @version 2.6.0
+ * @version 2.6.3
  * @link https://github.com/felixwhy/initial
  */
 if (!defined('__TYPECHO_ROOT_DIR__')) exit;
