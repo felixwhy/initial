@@ -1,3 +1,40 @@
+// Cloudflare「邮件地址混淆」(Email Address Obfuscation) 会把正文里的邮箱改写成
+// <a class="__cf_email__" data-cfemail="HEX">[email protected]</a>，真实地址由 Cloudflare
+// 注入的脚本在加载时解码。但 swup / AjaxLoad 都是用 innerHTML 插入的节点，插入后脚本不会
+// 再次执行，所以导航过来的页面只会看到 [email protected]，整页刷新才恢复。
+// 这里在内容替换后手动解码一次（关闭混淆时找不到节点，直接跳过，零副作用）。
+function decodeCfEmail(hex) {
+  const key = parseInt(hex.substr(0, 2), 16);
+  const bytes = [];
+  for (let i = 2; i < hex.length; i += 2) {
+    bytes.push(parseInt(hex.substr(i, i + 2), 16) ^ key);
+  }
+  try {
+    return new TextDecoder("utf-8").decode(new Uint8Array(bytes));
+  } catch (e) {
+    return bytes.map((b) => String.fromCharCode(b)).join("");
+  }
+}
+
+function restoreCfEmails(root) {
+  const scope = root && root.querySelectorAll ? root : document;
+  const nodes = scope.querySelectorAll(".__cf_email__[data-cfemail]");
+  for (let i = 0; i < nodes.length; i++) {
+    const el = nodes[i];
+    const mail = decodeCfEmail(el.getAttribute("data-cfemail") || "");
+    if (!mail) continue;
+    const link = document.createElement("a");
+    ["title", "target", "rel", "class"].forEach((attr) => {
+      if (!el.hasAttribute(attr)) return;
+      const value = attr === "class" ? el.className.replace(/\b__cf_email__\b/g, "").trim() : el.getAttribute(attr);
+      if (value) link.setAttribute(attr, value);
+    });
+    link.setAttribute("href", "mailto:" + mail);
+    link.textContent = mail;
+    el.parentNode.replaceChild(link, el);
+  }
+}
+
 if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !== "undefined") {
   let protoken = "";
   let protectedForm, statusMsg;
@@ -42,6 +79,7 @@ if (document.getElementById("body").hasAttribute("data-swup") && typeof Swup !==
   });
 
   swup.hooks.on("content:replace", () => {
+    restoreCfEmails(document.getElementById("main"));
     setTimeout(() => {
       $("#bar").remove();
     }, 300);
@@ -268,6 +306,7 @@ function loadNextPage() {
           newNextUrl = $(responseData).find(nextLinkSelector).attr("href");
         if (newPosts) {
           $(".ajaxload").before(newPosts);
+          restoreCfEmails(newPosts.get(0));
         }
         $(nextLinkSelector).removeAttr("class");
         if (newNextUrl) {
